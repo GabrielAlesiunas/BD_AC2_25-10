@@ -1,28 +1,67 @@
-Criando a tabela Clientes
+# Gerenciamento de Tabelas e Dados SQL
 
+Este repositório contém o código SQL para a criação e manipulação das tabelas `Cidades` e `Alunos`, incluindo comandos de inserção e consultas complexas para gestão de dados.
+
+## Estrutura das Tabelas
+
+### Tabela `Cidades`
+
+A tabela `Cidades` armazena informações sobre diferentes cidades, incluindo:
+- `id`: Identificador único da cidade (chave primária).
+- `nome`: Nome da cidade.
+- `populacao`: População estimada da cidade.
+
+```sql
 CREATE TABLE Cidades (
-id 			INT 			PRIMARY KEY,
-nome 		VARCHAR(60) 	NOT NULL,
-populacao 	INT
+    id INT PRIMARY KEY,
+    nome VARCHAR(60) NOT NULL,
+    populacao INT
 );
+```
 
-Criando a tabela Alunos
+### Tabela `Alunos`
+
+A tabela `Alunos` registra informações de alunos, com uma referência à cidade onde cada aluno reside. A estrutura inclui:
+- `id`: Identificador único do aluno (chave primária).
+- `nome`: Nome do aluno.
+- `data_nasc`: Data de nascimento do aluno.
+- `cidade_id`: ID da cidade onde o aluno reside (chave estrangeira para `Cidades`).
+
+```sql
 CREATE TABLE Alunos (
-id 			INT 		    PRIMARY KEY,
-nome 		VARCHAR(60)     NOT NULL,
-data_nasc 	DATE,
-cidade_id 	INT,
-FOREIGN KEY(cidade_id) REFERENCES Cidades(id)
+    id INT PRIMARY KEY,
+    nome VARCHAR(60) NOT NULL,
+    data_nasc DATE,
+    cidade_id INT,
+    FOREIGN KEY (cidade_id) REFERENCES Cidades(id)
 );
+```
 
-Inserts da tabela Cidades
+## Inserção de Dados e Consultas
+
+### Dados da Tabela `Cidades`
+
+Exemplo de inserção de dados na tabela `Cidades`:
+
+```sql
 INSERT INTO Cidades (id, nome, populacao) VALUES (1, 'São Paulo', 12176866);
 INSERT INTO Cidades (id, nome, populacao) VALUES (2, 'Rio de Janeiro', 6748000);
 INSERT INTO Cidades (id, nome, populacao) VALUES (3, 'Belo Horizonte', 2521564);
 INSERT INTO Cidades (id, nome, populacao) VALUES (4, 'Curitiba', 1948626);
 INSERT INTO Cidades (id, nome, populacao) VALUES (5, 'Porto Alegre', 1484941);
+```
 
-Inserts da tabela Alunos
+Consulta para exibir todos os registros da tabela `Cidades`:
+
+```sql
+SELECT * FROM Cidades;
+```
+
+### Dados da Tabela `Alunos`
+
+Exemplo de inserção de dados na tabela `Alunos`:
+
+```sql
 INSERT INTO Alunos (id, nome, data_nasc, cidade_id) VALUES (1, 'Ana Silva', '2005-03-15', 1);
 INSERT INTO Alunos (id, nome, data_nasc, cidade_id) VALUES (2, 'Bruno Costa', '2004-07-22', 2);
 INSERT INTO Alunos (id, nome, data_nasc, cidade_id) VALUES (3, 'Carla Santos', '2006-01-30', 3);
@@ -35,22 +74,45 @@ INSERT INTO Alunos (id, nome, data_nasc, cidade_id) VALUES (9, 'Isabela Martins'
 INSERT INTO Alunos (id, nome, data_nasc, cidade_id) VALUES (10, 'João Pedro', '2006-02-14', 5);
 INSERT INTO Alunos (id, nome, data_nasc, cidade_id) VALUES (11, 'Larissa Mendes', '2005-06-25', 1);
 INSERT INTO Alunos (id, nome, data_nasc, cidade_id) VALUES (12, 'Marcos Silva', '2004-10-09', 2);
+```
 
+Consulta para exibir todos os registros da tabela `Alunos`:
 
-Selects 
-Selecionar todos os dados da tabela Cidades
-SELECT * FROM Cidades;
-
-Selecionar todos os dados da tabela Aluno
+```sql
 SELECT * FROM Alunos;
+```
 
-Este comando seleciona todos os alunos e suas cidades correspondentes
-SELECT * FROM Alunos INNER JOIN Cidades on Cidades.id = Alunos.cidade_id;
+### Consultas Relacionadas
 
-Seleciona todos os alunos e suas cidades, incluindo alunos sem cidade, ordenados por nome
-SELECT * FROM Alunos LEFT JOIN Cidades ON Cidades.id = Alunos.cidade_id ORDER BY Alunos.nome;
+#### Alunos e Suas Cidades Correspondentes
 
-Seleciona alunos com cidades que começam com "Por" e nascidos após 15/08/2001, mostrando RA, Nome e Data de Nascimento
-SELECT A.id AS "RA", A.nome AS "Nome", A.data_nasc AS "Data de Nascimento" FROM Alunos A 
-LEFT JOIN Cidades C ON A.cidade_id = C.id  WHERE C.nome IS NOT NULL AND C.nome LIKE 'Por%' 
-AND A.data_nasc > '2001-08-15' ORDER BY A.nome;
+Esta consulta utiliza `INNER JOIN` para mostrar todos os alunos e as respectivas cidades:
+
+```sql
+SELECT * FROM Alunos
+INNER JOIN Cidades ON Cidades.id = Alunos.cidade_id;
+```
+
+#### Alunos com Suas Cidades (Incluindo Alunos Sem Cidade)
+
+Usa `LEFT JOIN` para incluir todos os alunos, mesmo aqueles sem cidade associada. Os resultados são ordenados por nome:
+
+```sql
+SELECT * FROM Alunos
+LEFT JOIN Cidades ON Cidades.id = Alunos.cidade_id
+ORDER BY Alunos.nome;
+```
+
+#### Alunos de Cidades Específicas e Data de Nascimento
+
+Consulta que seleciona alunos de cidades que começam com "Por" e nascidos após 15/08/2001, exibindo apenas o RA, Nome e Data de Nascimento:
+
+```sql
+SELECT A.id AS "RA", A.nome AS "Nome", A.data_nasc AS "Data de Nascimento"
+FROM Alunos A
+LEFT JOIN Cidades C ON A.cidade_id = C.id
+WHERE C.nome IS NOT NULL
+  AND C.nome LIKE 'Por%'
+  AND A.data_nasc > '2001-08-15'
+ORDER BY A.nome;
+```
